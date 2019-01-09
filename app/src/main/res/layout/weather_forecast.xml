@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="forecast"
+            type="com.gokousei.weather.bean.Weather.HeWeather6Bean.DailyForecastBean" />
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
+
+        <TextView
+            android:id="@+id/weather_forecast_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/forecast_date(forecast.date)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_sunrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/sunrise(forecast.sr)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_sundown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/sundown(forecast.ss)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/tmp(forecast.tmp_max,forecast.tmp_min)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_weather_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/weather_day(forecast.cond_txt_d)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_weather_night"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/weather_night(forecast.cond_txt_n)}" />
+
+        <TextView
+            android:id="@+id/weather_forecast_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/wind(forecast.wind_dir,forecast.wind_sc)}" />
+    </LinearLayout>
+
+</layout>
