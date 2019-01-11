@@ -43,7 +43,6 @@
                     android:background="@drawable/ripple"
                     android:gravity="center_vertical"
                     android:text="@{@string/city_info(weather.basic.admin_area,weather.basic.parent_city,weather.basic.location)}"
-                    android:textColor="#000000"
                     android:textSize="@dimen/location"
                     android:visibility="visible" />
 
@@ -85,14 +84,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="3dp">
-
-                        <TextView
-                            android:id="@+id/location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:text="@{@string/city_info(weather.basic.admin_area,weather.basic.parent_city,weather.basic.location)}"
-                            android:textSize="@dimen/location" />
 
                         <TableRow
                             android:id="@+id/temp"

@@ -7,9 +7,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.gokousei.weather.R;
+import com.gokousei.weather.bean.Weather;
+import com.gokousei.weather.data.DataController;
+import com.gokousei.weather.net.ApiRealize;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 public class SplashScreenActivity extends BaseActivity {
     Context mContext = this;
@@ -20,6 +26,30 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
         myRequestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        if ((DataController.getInstance().loadWeatherSP(
+                getApplicationContext(), WeatherActivity.SHARED_PREFERENCES_KEY) == null))
+            ApiRealize.getWeather(new Observer<Weather>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(Weather weather) {
+                    DataController.getInstance().saveWeatherSP(getApplicationContext(), weather, WeatherActivity.SHARED_PREFERENCES_KEY);
+                    DataController.getInstance().saveLocation(getApplicationContext(), "beijing");
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            }, "beijing");
     }
 
     @Override

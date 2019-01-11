@@ -6,7 +6,7 @@
 
         <variable
             name="weather"
-            type="com.gokousei.weather.bean.WeatherNowSDK" />
+            type="com.gokousei.weather.bean.Weather.HeWeather6Bean" />
     </data>
 
     <merge

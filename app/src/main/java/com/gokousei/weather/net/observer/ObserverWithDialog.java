@@ -15,6 +15,10 @@ public abstract class ObserverWithDialog<T> implements Observer<T>, ProgressDial
     public Context context;
     public Disposable disposable;
 
+    public enum Status {
+        Complete, Error
+    }
+
     public ObserverWithDialog(Context context1) {
         context = context1;
         progressDialogPuppet = new ProgressDialogPuppet(context1, false, this);
@@ -46,11 +50,13 @@ public abstract class ObserverWithDialog<T> implements Observer<T>, ProgressDial
 
     @Override
     public void onError(@NonNull Throwable e) {
+        onFinish(Status.Error);
         dismissProgressDialog();
     }
 
     @Override
     public void onComplete() {
+        onFinish(Status.Complete);
         dismissProgressDialog();
     }
 
@@ -63,4 +69,5 @@ public abstract class ObserverWithDialog<T> implements Observer<T>, ProgressDial
 
     public abstract void onSuccess(T t);
 
+    public abstract void onFinish(Status status);
 }

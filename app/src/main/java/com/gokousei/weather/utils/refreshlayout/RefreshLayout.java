@@ -41,14 +41,14 @@ public class RefreshLayout extends ViewGroup {
 
     private static OnRefreshListener mRefreshListener;
 
-    private Status mStatus = Status.NORMAL;
+    private Status mStatus = Status.Normal;
 
     private void updateStatus(Status status) {
         mStatus = status;
     }
 
     private enum Status {
-        NORMAL, TRY_REFRESH, REFRESHING, TRY_LOADMORE, LOADING
+        Normal, Try_Refresh, Refreshing, Try_LoadMore, Loading
     }
 
     public RefreshLayout(Context context) {
@@ -136,7 +136,7 @@ public class RefreshLayout extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int y = (int) event.getY();
-        if (mStatus == Status.REFRESHING || mStatus == Status.LOADING) {
+        if (mStatus == Status.Refreshing || mStatus == Status.Loading) {
             return true;
         }
 
@@ -147,13 +147,13 @@ public class RefreshLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 int dy = mLastMoveY - y;
                 if (getScaleY() <= 0 && dy <= 0) {
-                    if (mStatus == Status.TRY_LOADMORE) {
+                    if (mStatus == Status.Try_LoadMore) {
                         scrollBy(0, dy / 30);
                     } else {
                         scrollBy(0, dy / 3);
                     }
                 } else if (getScrollY() >= 0 && dy >= 0) {
-                    if (mStatus == Status.TRY_REFRESH) {
+                    if (mStatus == Status.Try_Refresh) {
                         scrollBy(0, dy / 30);
                     } else {
                         scrollBy(0, dy / 3);
@@ -192,7 +192,7 @@ public class RefreshLayout extends ViewGroup {
         boolean intercept = false;
         int x = (int) ev.getX();
         int y = (int) ev.getY();
-        if (mStatus == Status.REFRESHING || mStatus == Status.LOADING) {
+        if (mStatus == Status.Refreshing || mStatus == Status.Loading) {
             return false;
         }
         switch (ev.getAction()) {
@@ -208,14 +208,14 @@ public class RefreshLayout extends ViewGroup {
                         View child = getChildAt(0);
                         intercept = getRefreshIntercept(child);
                         if (intercept) {
-                            updateStatus(mStatus.TRY_REFRESH);
+                            updateStatus(mStatus.Try_Refresh);
                         }
                     } else if (y < mLastYIntercept) {
                         View child = getChildAt(lastChildIndex);
                         intercept = getLoadMoreIntercept(child);
 
                         if (intercept) {
-                            updateStatus(mStatus.TRY_LOADMORE);
+                            updateStatus(mStatus.Try_LoadMore);
                         }
                     } else {
                         intercept = false;
@@ -364,26 +364,26 @@ public class RefreshLayout extends ViewGroup {
         mHeaderText.setText("下拉刷新");
         mHeaderProgressBar.setVisibility(GONE);
         mHeaderArrow.setVisibility(VISIBLE);
-        updateStatus(Status.NORMAL);
+        updateStatus(Status.Normal);
     }
 
     public void loadMoreFinished() {
         mFooterText.setText("上拉加载");
         mFooterProgressBar.setVisibility(GONE);
         scrollTo(0, 0);
-        updateStatus(Status.NORMAL);
+        updateStatus(Status.Normal);
     }
 
     private void releaseWithStatusTryRefresh() {
         scrollBy(0, -getScrollY());
         mHeaderText.setText("下拉刷新");
-        updateStatus(Status.NORMAL);
+        updateStatus(Status.Normal);
     }
 
     private void releaseWithStatusTryLoadMore() {
         scrollBy(0, -getScrollY());
         mFooterText.setText("上拉加载更多");
-        updateStatus(Status.NORMAL);
+        updateStatus(Status.Normal);
     }
 
     private void releaseWithStatusRefresh() {
@@ -391,14 +391,14 @@ public class RefreshLayout extends ViewGroup {
         mHeaderProgressBar.setVisibility(VISIBLE);
         mHeaderArrow.setVisibility(GONE);
         mHeaderText.setText("正在刷新");
-        updateStatus(Status.REFRESHING);
+        updateStatus(Status.Refreshing);
     }
 
     private void releaseWithStatusLoadMore() {
         scrollTo(0, mEffectiveFooterHeight);
         mFooterText.setText("正在加载");
         mFooterProgressBar.setVisibility(VISIBLE);
-        updateStatus(Status.LOADING);
+        updateStatus(Status.Loading);
     }
     /*修改header和footer的状态*/
 

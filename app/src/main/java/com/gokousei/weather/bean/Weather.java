@@ -2,9 +2,10 @@ package com.gokousei.weather.bean;
 
 import android.databinding.BaseObservable;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Weather extends BaseObservable {
+public class Weather extends BaseObservable implements Serializable {
     private List<HeWeather6Bean> HeWeather6;
 
     public List<HeWeather6Bean> getHeWeather6() {
@@ -15,7 +16,7 @@ public class Weather extends BaseObservable {
         this.HeWeather6 = HeWeather6;
     }
 
-    public static class HeWeather6Bean {
+    public static class HeWeather6Bean implements Serializable{
         /**
          * basic : {"cid":"CN101020100","location":"上海","parent_city":"上海","admin_area":"上海","cnty":"中国","lat":"31.23170662","lon":"121.47264099","tz":"+8.00"}
          * update : {"loc":"2019-01-08 16:56","utc":"2019-01-08 08:56"}
@@ -90,7 +91,7 @@ public class Weather extends BaseObservable {
             this.lifestyle = lifestyle;
         }
 
-        public static class BasicBean {
+        public static class BasicBean implements Serializable{
             /**
              * cid : CN101020100
              * location : 上海
@@ -176,7 +177,7 @@ public class Weather extends BaseObservable {
             }
         }
 
-        public static class UpdateBean {
+        public static class UpdateBean implements Serializable{
             /**
              * loc : 2019-01-08 16:56
              * utc : 2019-01-08 08:56
@@ -202,7 +203,7 @@ public class Weather extends BaseObservable {
             }
         }
 
-        public static class NowBean {
+        public static class NowBean implements Serializable{
             /**
              * cloud : 91
              * cond_code : 104
@@ -338,7 +339,7 @@ public class Weather extends BaseObservable {
             }
         }
 
-        public static class DailyForecastBean {
+        public static class DailyForecastBean implements Serializable{
             /**
              * cond_code_d : 104
              * cond_code_n : 305
@@ -554,7 +555,7 @@ public class Weather extends BaseObservable {
             }
         }
 
-        public static class HourlyBean {
+        public static class HourlyBean implements Serializable{
             /**
              * cloud : 96
              * cond_code : 104
@@ -690,7 +691,7 @@ public class Weather extends BaseObservable {
             }
         }
 
-        public static class LifestyleBean {
+        public static class LifestyleBean implements Serializable{
             /**
              * type : comf
              * brf : 较舒适

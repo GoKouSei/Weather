@@ -11,6 +11,10 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class ObserverGeneral<T> implements Observer<T> {
 
+    public enum Status {
+        Complete, Error
+    }
+
     public ObserverGeneral() {
     }
 
@@ -27,13 +31,15 @@ public abstract class ObserverGeneral<T> implements Observer<T> {
 
     @Override
     public void onError(@NonNull Throwable e) {
-
+        onFinish(Status.Error);
     }
 
     @Override
     public void onComplete() {
-
+        onFinish(Status.Complete);
     }
 
     public abstract void onSuccess(T t);
+
+    public abstract void onFinish(Status status);
 }
