@@ -2,8 +2,8 @@ package com.gokousei.weather.net.observer;
 
 import android.content.Context;
 
-import com.gokousei.weather.utils.dialog.ProgressDialogCancelListener;
-import com.gokousei.weather.utils.dialog.ProgressDialogPuppet;
+import com.gokousei.weather.view.dialog.ProgressDialogCancelListener;
+import com.gokousei.weather.view.dialog.ProgressDialogPuppet;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;

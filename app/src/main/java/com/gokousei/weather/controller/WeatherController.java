@@ -11,6 +11,12 @@ public class WeatherController {
         mContext = context;
     }
 
+    public boolean checPrecipitation(String pcpn) {
+        if (pcpn.equals("0.0"))
+            return false;
+        return true;
+    }
+
     public int getWeatherUI(int condCode) {
         switch (condCode) {
             case 100:

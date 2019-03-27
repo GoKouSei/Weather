@@ -42,7 +42,7 @@
                     android:layout_marginStart="10dp"
                     android:background="@drawable/ripple"
                     android:gravity="center_vertical"
-                    android:text="@{@string/city_info(weather.basic.admin_area,weather.basic.parent_city,weather.basic.location)}"
+                    android:text="@{@string/city_info(weather.basic.parent_city,weather.basic.location)}"
                     android:textSize="@dimen/location"
                     android:visibility="visible" />
 
@@ -63,7 +63,7 @@
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
-        <com.gokousei.weather.utils.refreshlayout.RefreshLayout
+        <com.gokousei.weather.view.refreshlayout.RefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -180,10 +180,12 @@
                                 android:textSize="@dimen/weather_info" />
 
                             <TextView
+                                android:id="@+id/weather_precipitation"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@{@string/precipitation(weather.now.pcpn)}"
-                                android:textSize="@dimen/weather_info" />
+                                android:textSize="@dimen/weather_info"
+                                android:visibility="visible" />
                         </TableRow>
                     </RelativeLayout>
 
@@ -200,8 +202,23 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="生活指数"
+                        android:textSize="40sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerView_lifestyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="600dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp" />
+
                 </LinearLayout>
             </ScrollView>
-        </com.gokousei.weather.utils.refreshlayout.RefreshLayout>
+        </com.gokousei.weather.view.refreshlayout.RefreshLayout>
     </LinearLayout>
 </layout>

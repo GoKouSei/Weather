@@ -8,13 +8,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 
 import com.gokousei.weather.R;
+import com.gokousei.weather.adapter.LifesStyleAdapter;
 import com.gokousei.weather.adapter.WeatherForecastAdapter;
 import com.gokousei.weather.bean.Weather;
 import com.gokousei.weather.controller.WeatherController;
@@ -24,14 +24,15 @@ import com.gokousei.weather.net.ApiRealize;
 import com.gokousei.weather.net.observer.ObserverGeneral;
 import com.gokousei.weather.net.observer.ObserverWithDialog;
 import com.gokousei.weather.utils.bitmap.BlurDrawable;
-import com.gokousei.weather.utils.refreshlayout.OnRefreshListener;
-import com.gokousei.weather.utils.refreshlayout.RefreshLayout;
+import com.gokousei.weather.view.refreshlayout.OnRefreshListener;
+import com.gokousei.weather.view.refreshlayout.RefreshLayout;
 
 public class WeatherActivity extends BaseActivity {
 
     public static final String SHARED_PREFERENCES_KEY = "Weather";
 
-    WeatherForecastAdapter adapter;
+    WeatherForecastAdapter forecastAdapter;
+    LifesStyleAdapter lifesStyleAdapter;
     RecyclerView.LayoutManager layoutManager;
     Weather.HeWeather6Bean weatherBean;
     Weather weather;
@@ -47,33 +48,21 @@ public class WeatherActivity extends BaseActivity {
         binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_weather);
         setSupportActionBar(binding.customToolbar);
+        init();
+    }
+
+    void init() {
         mWeatherController = new WeatherController(mContext);
         location = DataController.getInstance().loadLocation(getApplicationContext());
         weather = DataController.getInstance().loadWeatherSP(mContext, SHARED_PREFERENCES_KEY);
         if (weather != null) {
-            weatherBean = weather.getHeWeather6().get(0);
-            binding.setWeather(weatherBean);
-            adapter = new WeatherForecastAdapter(weatherBean.getDaily_forecast());
-            layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
-            binding.recyclerViewWeatherForecast.setLayoutManager(layoutManager);
-            binding.recyclerViewWeatherForecast.addItemDecoration(
-                    new DividerItemDecoration(mContext, DividerItemDecoration.HORIZONTAL));
-            binding.recyclerViewWeatherForecast.setAdapter(adapter);
-            binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
+            configData();
         } else {
-            if (location != null)
+            if (location != null && !location.isEmpty())
                 ApiRealize.getWeather(new ObserverGeneral<Weather>() {
                     @Override
                     public void onSuccess(Weather weather) {
-                        weatherBean = weather.getHeWeather6().get(0);
-                        binding.setWeather(weatherBean);
-                        adapter = new WeatherForecastAdapter(weatherBean.getDaily_forecast());
-                        layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
-                        binding.recyclerViewWeatherForecast.setLayoutManager(layoutManager);
-                        binding.recyclerViewWeatherForecast.addItemDecoration(
-                                new DividerItemDecoration(mContext, DividerItemDecoration.HORIZONTAL));
-                        binding.recyclerViewWeatherForecast.setAdapter(adapter);
-                        binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
+                        configData();
                         DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
                     }
 
@@ -102,6 +91,22 @@ public class WeatherActivity extends BaseActivity {
             public void doLoadMore() {
             }
         });
+    }
+
+    void configData() {
+        weatherBean = weather.getHeWeather6().get(0);
+        binding.setWeather(weatherBean);
+        forecastAdapter = new WeatherForecastAdapter(weatherBean.getDaily_forecast());
+        lifesStyleAdapter = new LifesStyleAdapter(weatherBean.getLifestyle());
+        layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.recyclerViewWeatherForecast.setLayoutManager(layoutManager);
+        binding.recyclerViewWeatherForecast.addItemDecoration(
+                new DividerItemDecoration(mContext, DividerItemDecoration.HORIZONTAL));
+        binding.recyclerViewWeatherForecast.setAdapter(forecastAdapter);
+        layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+        binding.recyclerViewLifestyle.setLayoutManager(layoutManager);
+        binding.recyclerViewLifestyle.setAdapter(lifesStyleAdapter);
+        binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
     }
 
     @Override
@@ -196,8 +201,10 @@ public class WeatherActivity extends BaseActivity {
                 weatherBean = weather.getHeWeather6().get(0);
                 binding.setWeather(weatherBean);
                 binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
-                adapter.updateData(weatherBean.getDaily_forecast());
-                adapter.notifyDataSetChanged();
+                forecastAdapter.updateData(weatherBean.getDaily_forecast());
+                lifesStyleAdapter.updateData(weatherBean.getLifestyle());
+                forecastAdapter.notifyDataSetChanged();
+                lifesStyleAdapter.notifyDataSetChanged();
                 DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
             }
 
@@ -222,8 +229,10 @@ public class WeatherActivity extends BaseActivity {
                 weatherBean = weather.getHeWeather6().get(0);
                 binding.setWeather(weatherBean);
                 binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
-                adapter.updateData(weatherBean.getDaily_forecast());
-                adapter.notifyDataSetChanged();
+                forecastAdapter.updateData(weatherBean.getDaily_forecast());
+                lifesStyleAdapter.updateData(weatherBean.getLifestyle());
+                forecastAdapter.notifyDataSetChanged();
+                lifesStyleAdapter.notifyDataSetChanged();
                 DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
             }
 

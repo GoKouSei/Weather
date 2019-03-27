@@ -18,7 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DataController {
-    private static DataController dataController;
+    private volatile static DataController dataController;
     private static SharedPreferences sharedPreferences;
     private static final String SHARED_PREFERENCES_NAME = "Weathers";
     private static final String LOCATION_KEY = "Location";
@@ -60,7 +60,7 @@ public class DataController {
     }
 
     public String loadLocation(Context context) {
-        return getSharedPreferences(context).getString(LOCATION_KEY, null);
+        return getSharedPreferences(context).getString(LOCATION_KEY, "");
     }
 
     private void save(Context context, Object object, String key, Type type) {

@@ -3,6 +3,7 @@ package com.gokousei.weather.view;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -10,15 +11,16 @@ import com.gokousei.weather.R;
 import com.gokousei.weather.bean.Weather;
 import com.gokousei.weather.data.DataController;
 import com.gokousei.weather.net.ApiRealize;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.gokousei.weather.utils.LocationUtils;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 public class SplashScreenActivity extends BaseActivity {
     Context mContext = this;
+    String location;
+    String local;
+    GetAddress getAddress = new GetAddress();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,43 +28,51 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
         myRequestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        if ((DataController.getInstance().loadWeatherSP(
-                getApplicationContext(), WeatherActivity.SHARED_PREFERENCES_KEY) == null))
-            ApiRealize.getWeather(new Observer<Weather>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(Weather weather) {
-                    DataController.getInstance().saveWeatherSP(getApplicationContext(), weather, WeatherActivity.SHARED_PREFERENCES_KEY);
-                    DataController.getInstance().saveLocation(getApplicationContext(), "beijing");
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            }, "beijing");
+        local = DataController.getInstance().loadLocation(mContext);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(mContext, WeatherActivity.class));
-                    finish();
-                }
-            }, 2000);
-        }
+        if (requestCode == 1)
+            getAddress.execute();
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    class GetAddress extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            location = LocationUtils.getAddress(getSystemService(Context.LOCATION_SERVICE), mContext);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (!location.isEmpty() && !local.equals(location))
+                ApiRealize.getWeather(new Observer<Weather>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(Weather weather) {
+                        DataController.getInstance().saveWeatherSP(getApplicationContext(), weather, WeatherActivity.SHARED_PREFERENCES_KEY);
+                        DataController.getInstance().saveLocation(getApplicationContext(), location);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        startActivity(new Intent(mContext, WeatherActivity.class));
+                        finish();
+                    }
+                }, location);
+            else {
+                startActivity(new Intent(mContext, WeatherActivity.class));
+                finish();
+            }
+        }
     }
 }

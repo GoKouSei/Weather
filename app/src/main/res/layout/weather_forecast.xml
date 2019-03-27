@@ -18,7 +18,7 @@
             android:id="@+id/weather_forecast_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/forecast_date(forecast.date)}" />
+            android:text="saw" />
 
         <TextView
             android:id="@+id/weather_forecast_sunrise"

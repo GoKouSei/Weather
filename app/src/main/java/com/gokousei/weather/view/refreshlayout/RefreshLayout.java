@@ -1,4 +1,4 @@
-package com.gokousei.weather.utils.refreshlayout;
+package com.gokousei.weather.view.refreshlayout;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;

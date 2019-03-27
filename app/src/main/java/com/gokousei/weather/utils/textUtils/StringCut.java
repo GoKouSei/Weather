@@ -1,4 +1,4 @@
-package com.gokousei.weather.utils;
+package com.gokousei.weather.utils.textUtils;
 
 public class StringCut {
 

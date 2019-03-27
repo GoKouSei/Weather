@@ -1,4 +1,4 @@
-package com.gokousei.weather.utils.dialog;
+package com.gokousei.weather.view.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
