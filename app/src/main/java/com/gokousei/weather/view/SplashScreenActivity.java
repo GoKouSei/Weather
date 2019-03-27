@@ -11,7 +11,7 @@ import com.gokousei.weather.R;
 import com.gokousei.weather.bean.Weather;
 import com.gokousei.weather.data.DataController;
 import com.gokousei.weather.net.ApiRealize;
-import com.gokousei.weather.utils.LocationUtils;
+import com.gokousei.weather.utils.location.LocationUtils;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -41,7 +41,7 @@ public class SplashScreenActivity extends BaseActivity {
     class GetAddress extends AsyncTask<Void, Integer, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            location = LocationUtils.getAddress(getSystemService(Context.LOCATION_SERVICE), mContext);
+            location = LocationUtils.getInstance().getAddress(mContext);
             return null;
         }
 

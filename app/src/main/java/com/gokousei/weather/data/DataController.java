@@ -56,7 +56,8 @@ public class DataController {
     }
 
     public void saveLocation(Context context, String location) {
-        getEditor(context).putString(LOCATION_KEY, location).apply();
+        if (location != null && !location.isEmpty())
+            getEditor(context).putString(LOCATION_KEY, location).apply();
     }
 
     public String loadLocation(Context context) {
@@ -82,7 +83,8 @@ public class DataController {
                         Log.d("GoKouSeiLog", "saveWeather: IOException=" + e.toString());
                         e.printStackTrace();
                     }
-                Log.d("GoKouSeiLog", "saveWeather: 传入对象为空");
+                else
+                    Log.d("GoKouSeiLog", "saveWeatherSP: 传入对象为空");
                 break;
             case File:
                 if (object != null)
@@ -99,7 +101,8 @@ public class DataController {
                         Log.d("GoKouSeiLog", "saveWeather: IOException=" + e.toString());
                         e.printStackTrace();
                     }
-                Log.d("GoKouSeiLog", "saveWeather: 传入对象为空");
+                else
+                    Log.d("GoKouSeiLog", "saveWeatherF: 传入对象为空");
                 break;
         }
     }

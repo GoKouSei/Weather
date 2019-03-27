@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +25,19 @@ import com.gokousei.weather.net.ApiRealize;
 import com.gokousei.weather.net.observer.ObserverGeneral;
 import com.gokousei.weather.net.observer.ObserverWithDialog;
 import com.gokousei.weather.utils.bitmap.BlurDrawable;
+import com.gokousei.weather.utils.location.LocationUtils;
 import com.gokousei.weather.view.refreshlayout.OnRefreshListener;
 import com.gokousei.weather.view.refreshlayout.RefreshLayout;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class WeatherActivity extends BaseActivity {
 
     public static final String SHARED_PREFERENCES_KEY = "Weather";
 
+    ScheduledExecutorService scheduledService;
     WeatherForecastAdapter forecastAdapter;
     LifesStyleAdapter lifesStyleAdapter;
     RecyclerView.LayoutManager layoutManager;
@@ -52,6 +59,7 @@ public class WeatherActivity extends BaseActivity {
     }
 
     void init() {
+        scheduledService = Executors.newScheduledThreadPool(2);
         mWeatherController = new WeatherController(mContext);
         location = DataController.getInstance().loadLocation(getApplicationContext());
         weather = DataController.getInstance().loadWeatherSP(mContext, SHARED_PREFERENCES_KEY);
@@ -63,7 +71,8 @@ public class WeatherActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Weather weather) {
                         configData();
-                        DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
+                        if (weather != null)
+                            DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
                     }
 
                     @Override
@@ -77,6 +86,7 @@ public class WeatherActivity extends BaseActivity {
                     }
                 }, location);
         }
+        LocationUtils.getInstance().startRequestLocation(mContext);
         binding.scrollViewParent.setBackground(BlurDrawable.getInstance()
                 .setAlpha(240)
                 .BlurDrawable(mContext, getResources(),
@@ -84,13 +94,83 @@ public class WeatherActivity extends BaseActivity {
         RefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void doRefresh() {
-                refresh();
+                refresh(true);
             }
 
             @Override
             public void doLoadMore() {
             }
         });
+        scheduledService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                boolean isChange = LocationUtils.getInstance().checkCityChange(mContext, LocationUtils.getInstance().getCurrentLocation());
+                if (!isChange) {
+                    location = LocationUtils.getInstance().getAddress(mContext,
+                            LocationUtils.getInstance().getCurrentLocation());
+                    if (location != null && !location.isEmpty()) {
+                        DataController.getInstance().saveLocation(mContext, location);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                refresh(false);
+                            }
+                        });
+                        Log.d("GoKouSeiLog", "run: location=" + DataController.getInstance().loadLocation(mContext));
+                    }
+                }
+            }
+        }, 1, 10, TimeUnit.MINUTES);
+    }
+
+    void refresh(boolean isShowDialog) {
+        if (isShowDialog)
+            ApiRealize.getWeather(new ObserverWithDialog<Weather>(mContext) {
+                @Override
+                public void onSuccess(Weather weather) {
+                    weatherBean = weather.getHeWeather6().get(0);
+                    binding.setWeather(weatherBean);
+                    binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
+                    forecastAdapter.updateData(weatherBean.getDaily_forecast());
+                    lifesStyleAdapter.updateData(weatherBean.getLifestyle());
+                    forecastAdapter.notifyDataSetChanged();
+                    lifesStyleAdapter.notifyDataSetChanged();
+                    DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
+                }
+
+                @Override
+                public void onFinish(Status status) {
+                    switch (status) {
+                        case Complete:
+                            break;
+                        case Error:
+                            break;
+                    }
+                }
+            }, location);
+        else ApiRealize.getWeather(new ObserverGeneral<Weather>() {
+            @Override
+            public void onSuccess(Weather weather) {
+                weatherBean = weather.getHeWeather6().get(0);
+                binding.setWeather(weatherBean);
+                binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
+                forecastAdapter.updateData(weatherBean.getDaily_forecast());
+                lifesStyleAdapter.updateData(weatherBean.getLifestyle());
+                forecastAdapter.notifyDataSetChanged();
+                lifesStyleAdapter.notifyDataSetChanged();
+                DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
+            }
+
+            @Override
+            public void onFinish(Status status) {
+                switch (status) {
+                    case Complete:
+                        break;
+                    case Error:
+                        break;
+                }
+            }
+        }, location);
     }
 
     void configData() {
@@ -188,7 +268,7 @@ public class WeatherActivity extends BaseActivity {
                 }
                 break;
             case R.id.refresh:
-                refresh();
+                refresh(true);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -213,7 +293,8 @@ public class WeatherActivity extends BaseActivity {
                 switch (status) {
                     case Complete:
                         location = city;
-                        DataController.getInstance().saveLocation(getApplicationContext(), city);
+                        if (location != null && !location.isEmpty())
+                            DataController.getInstance().saveLocation(getApplicationContext(), city);
                         break;
                     case Error:
                         break;
@@ -222,29 +303,10 @@ public class WeatherActivity extends BaseActivity {
         }, city);
     }
 
-    void refresh() {
-        ApiRealize.getWeather(new ObserverWithDialog<Weather>(mContext) {
-            @Override
-            public void onSuccess(Weather weather) {
-                weatherBean = weather.getHeWeather6().get(0);
-                binding.setWeather(weatherBean);
-                binding.weatherUI.setImageResource(mWeatherController.getWeatherUI(weatherBean.getNow().getCond_code()));
-                forecastAdapter.updateData(weatherBean.getDaily_forecast());
-                lifesStyleAdapter.updateData(weatherBean.getLifestyle());
-                forecastAdapter.notifyDataSetChanged();
-                lifesStyleAdapter.notifyDataSetChanged();
-                DataController.getInstance().saveWeatherSP(mContext, weather, SHARED_PREFERENCES_KEY);
-            }
-
-            @Override
-            public void onFinish(Status status) {
-                switch (status) {
-                    case Complete:
-                        break;
-                    case Error:
-                        break;
-                }
-            }
-        }, location);
+    @Override
+    protected void onDestroy() {
+        LocationUtils.getInstance().stopRequestLocation(mContext);
+        scheduledService.shutdown();
+        super.onDestroy();
     }
 }
