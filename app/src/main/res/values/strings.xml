@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather</string>
+    <string name="app_name">不是天气</string>
     <string name="weather_now">%s</string>
     <string name="tmp_now">%s  ℃</string>
     <string name="tmp_fl">"体感温度: %s ℃"</string>

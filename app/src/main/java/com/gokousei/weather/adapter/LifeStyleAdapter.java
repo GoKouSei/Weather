@@ -1,12 +1,13 @@
 package com.gokousei.weather.adapter;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gokousei.weather.R;
 import com.gokousei.weather.bean.Weather;
@@ -14,11 +15,11 @@ import com.gokousei.weather.databinding.LifestyleBinding;
 
 import java.util.List;
 
-public class LifesStyleAdapter extends RecyclerView.Adapter<LifesStyleAdapter.ViewHolder> {
+public class LifeStyleAdapter extends RecyclerView.Adapter<LifeStyleAdapter.ViewHolder> {
 
     private List<Weather.HeWeather6Bean.LifestyleBean> mData;
 
-    public LifesStyleAdapter(List<Weather.HeWeather6Bean.LifestyleBean> data) {
+    public LifeStyleAdapter(List<Weather.HeWeather6Bean.LifestyleBean> data) {
         mData = data;
     }
 

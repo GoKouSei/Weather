@@ -5,9 +5,9 @@ import android.content.Context;
 import com.gokousei.weather.view.dialog.ProgressDialogCancelListener;
 import com.gokousei.weather.view.dialog.ProgressDialogPuppet;
 
-import io.reactivex.Observer;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public abstract class ObserverWithDialog<T> implements Observer<T>, ProgressDialogCancelListener {
     private ProgressDialogPuppet progressDialogPuppet;

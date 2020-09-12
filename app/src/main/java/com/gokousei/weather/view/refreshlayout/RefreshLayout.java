@@ -2,7 +2,6 @@ package com.gokousei.weather.view.refreshlayout;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gokousei.weather.R;
 

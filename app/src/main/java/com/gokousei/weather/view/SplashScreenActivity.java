@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.gokousei.weather.R;
 import com.gokousei.weather.bean.Weather;
@@ -13,12 +14,11 @@ import com.gokousei.weather.data.DataController;
 import com.gokousei.weather.net.ApiRealize;
 import com.gokousei.weather.utils.location.LocationUtils;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.core.Observer;
 
 public class SplashScreenActivity extends BaseActivity {
     Context mContext = this;
-    String location;
     String local;
     GetAddress getAddress = new GetAddress();
 
@@ -27,7 +27,8 @@ public class SplashScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         myRequestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
         local = DataController.getInstance().loadLocation(mContext);
     }
 
@@ -41,13 +42,15 @@ public class SplashScreenActivity extends BaseActivity {
     class GetAddress extends AsyncTask<Void, Integer, String> {
         @Override
         protected String doInBackground(Void... voids) {
-            location = LocationUtils.getInstance().getAddress(mContext);
-            return null;
+            String location = LocationUtils.getInstance().getAddress(mContext);
+            if (location==null||location.equals(""))
+                location = "shanghai";
+            return location;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if (!location.isEmpty() && !local.equals(location))
+            if (!s.isEmpty() && !local.equals(s))
                 ApiRealize.getWeather(new Observer<Weather>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -56,7 +59,7 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onNext(Weather weather) {
                         DataController.getInstance().saveWeatherSP(getApplicationContext(), weather, WeatherActivity.SHARED_PREFERENCES_KEY);
-                        DataController.getInstance().saveLocation(getApplicationContext(), location);
+                        DataController.getInstance().saveLocation(getApplicationContext(), s);
                     }
 
                     @Override
@@ -68,7 +71,7 @@ public class SplashScreenActivity extends BaseActivity {
                         startActivity(new Intent(mContext, WeatherActivity.class));
                         finish();
                     }
-                }, location);
+                }, s);
             else {
                 startActivity(new Intent(mContext, WeatherActivity.class));
                 finish();

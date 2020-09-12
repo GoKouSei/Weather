@@ -4,7 +4,7 @@ import com.gokousei.weather.bean.Weather;
 import com.gokousei.weather.bean.WeatherForecast;
 import com.gokousei.weather.bean.WeatherNow;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 

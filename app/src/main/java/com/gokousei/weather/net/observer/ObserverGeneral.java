@@ -1,8 +1,8 @@
 package com.gokousei.weather.net.observer;
 
-import io.reactivex.Observer;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * 通用的Observer模板使用抽象方法onSuccess来处理onNext

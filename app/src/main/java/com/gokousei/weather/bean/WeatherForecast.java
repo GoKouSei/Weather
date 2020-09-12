@@ -1,7 +1,7 @@
 package com.gokousei.weather.bean;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 
 import com.gokousei.weather.BR;
 

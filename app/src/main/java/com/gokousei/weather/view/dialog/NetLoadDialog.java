@@ -4,8 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 
 import com.gokousei.weather.R;
 

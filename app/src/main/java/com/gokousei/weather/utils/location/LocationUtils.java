@@ -8,8 +8,9 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import com.gokousei.weather.data.DataController;
 
@@ -74,7 +75,7 @@ public class LocationUtils {
                     for (int i = 0; i < addresses.size(); i++) {
                         feature.add(addresses.get(i).getFeatureName());
                         Log.d("GoKouSeiLog", "getAddress: " + addresses.get(i));
-                        if (locality.equals(""))
+                        if (locality==null||locality.equals(""))
                             locality = addresses.get(0).getLocality();
                     }
                     if (!feature.isEmpty())

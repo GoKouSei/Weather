@@ -4,12 +4,12 @@ import com.gokousei.weather.bean.Weather;
 import com.gokousei.weather.bean.WeatherForecast;
 import com.gokousei.weather.bean.WeatherNow;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 ;
 
@@ -30,7 +30,7 @@ public class ApiRealize {
                 .subscribe(consumer);
     }
 
-    public static void getWeather(Observer<Object> observer, String location,boolean isUse) {
+    public static void getWeather(Observer<Object> observer, String location, boolean isUse) {
         Observable.concat(ApiResult.getApiInstance().getWeatherNow(location, API_KEY)
                 , ApiResult.getApiInstance().getWeatherForecast(location, API_KEY))
                 .subscribeOn(Schedulers.io())
