@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -56,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
     protected boolean myCheckPermissions(String permissions, String message, Activity activity) {
         if (ContextCompat.checkSelfPermission(this, permissions)
                 != PackageManager.PERMISSION_GRANTED) {
-//            myRequestPermissions(permissions);
+//            myRequestPermissions(permissions,"ssa",activity);
             showPermissionDeniedDialog(message, activity);
             return false;
         } else {
@@ -69,8 +70,8 @@ public class BaseActivity extends AppCompatActivity {
      *
      * @param permissions 待申请的权限组
      */
-    protected void myRequestPermissions(String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(this,
+    protected void myRequestPermissions(Activity activity, String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(activity,
                 permissions, requestCode);
     }
 
@@ -122,24 +123,26 @@ public class BaseActivity extends AppCompatActivity {
      * @param activity 发起前线申请或检查的Activity
      */
     private void showPermissionDeniedDialog(String message, final Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("运行异常");
-        builder.setMessage("使用此功能所必须的”" + message + "“权限无法获取，" +
-                "请点击“设置”按钮在弹出的设置界面打开权限。\n点击”关闭“按钮将返回上个界面。");
-        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                activity.finish();
-            }
-        });
-        builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startAppSettings();
-                activity.finish();
-            }
-        });
-        builder.show();
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("运行异常")
+                .setMessage("使用此功能所必须的”" + message + "“权限无法获取，" +
+                        "请点击“设置”按钮在弹出的设置界面打开权限。\n点击”关闭“按钮将返回上个界面。")
+                .setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                })
+                .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                        activity.finish();
+                    }
+                }).create();
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
     }
 
     /**
@@ -184,8 +187,8 @@ public class BaseActivity extends AppCompatActivity {
         if (v != null && (v instanceof EditText)) {//判断传递的view是否是EditText
             if (coordinate[0] == 0 && coordinate[1] == 0) {
                 v.getLocationOnScreen(coordinate);//获得view的坐标
-                x = coordinate[0] + v.getWidth()+140;
-                y = coordinate[1] + v.getHeight()+164;
+                x = coordinate[0] + v.getWidth() + 140;
+                y = coordinate[1] + v.getHeight() + 164;
             }
             //通过点击的坐标和view的坐标对比判断点击的是否EditText
             if (event.getRawX() < x && event.getRawX() > coordinate[0] &&

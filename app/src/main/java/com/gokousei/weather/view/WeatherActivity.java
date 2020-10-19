@@ -126,6 +126,11 @@ public class WeatherActivity extends BaseActivity {
     }
 
     void refresh(boolean isShowDialog) {
+  /*      Intent mservice = new Intent(this, MyNavigationService.class);
+        mservice.putExtra("Foreground", "This is a foreground service.");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(mservice);
+        }*/
         if (isShowDialog)
             ApiRealize.getWeather(new ObserverWithDialog<Weather>(mContext) {
                 @Override
