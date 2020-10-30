@@ -19,13 +19,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Base">
+        <receiver
+            android:name=".receiver.MyReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
         <service
             android:name=".service.MyNavigationService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="location">
-
-        </service>
+            android:foregroundServiceType="location"></service>
 
         <activity
             android:name=".view.WeatherActivity"

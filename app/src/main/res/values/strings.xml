@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">不是天气</string>
+    <string name="app_name">简洁天气</string>
     <string name="weather_now">%s</string>
     <string name="tmp_now">%s  ℃</string>
     <string name="tmp_fl">"体感温度: %s ℃"</string>
     <string name="weather_now_title">当前天气</string>
-    <string name="city_info"> %s省 %s</string>
+    <string name="city_info">%s %s</string>
     <string name="refresh">刷新</string>
     <string name="confirm">确认</string>
     <string name="forecast_date">日期: %s</string>

@@ -1,6 +1,8 @@
 package com.gokousei.weather.view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +28,7 @@ import com.gokousei.weather.databinding.ActivityWeatherBinding;
 import com.gokousei.weather.net.ApiRealize;
 import com.gokousei.weather.net.observer.ObserverGeneral;
 import com.gokousei.weather.net.observer.ObserverWithDialog;
+import com.gokousei.weather.receiver.MyReceiver;
 import com.gokousei.weather.utils.ToastUtils;
 import com.gokousei.weather.utils.bitmap.BlurDrawable;
 import com.gokousei.weather.utils.location.LocationUtils;
@@ -50,6 +54,8 @@ public class WeatherActivity extends BaseActivity {
     WeatherController mWeatherController;
     SearchView mSearchView;
     String location;
+    MyReceiver receiver;
+    LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,14 @@ public class WeatherActivity extends BaseActivity {
                 DataBindingUtil.setContentView(this, R.layout.activity_weather);
         setSupportActionBar(binding.customToolbar);
         init();
+        receiver = new MyReceiver();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter("com.gokousei.weather.action.START_SERVICE");
+        localBroadcastManager.registerReceiver(receiver, intentFilter);
+        Intent intent = new Intent();
+        intent.setAction("com.gokousei.weather.action.START_SERVICE");
+        localBroadcastManager.sendBroadcast(intent);
+        Log.d("GoKouSeiLog", "onCreate: send");
     }
 
     void init() {
@@ -126,11 +140,6 @@ public class WeatherActivity extends BaseActivity {
     }
 
     void refresh(boolean isShowDialog) {
-  /*      Intent mservice = new Intent(this, MyNavigationService.class);
-        mservice.putExtra("Foreground", "This is a foreground service.");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(mservice);
-        }*/
         if (isShowDialog)
             ApiRealize.getWeather(new ObserverWithDialog<Weather>(mContext) {
                 @Override
@@ -322,6 +331,7 @@ public class WeatherActivity extends BaseActivity {
     protected void onDestroy() {
         LocationUtils.getInstance().stopRequestLocation(mContext);
         scheduledService.shutdown();
+        localBroadcastManager.unregisterReceiver(receiver);
         super.onDestroy();
     }
 }
